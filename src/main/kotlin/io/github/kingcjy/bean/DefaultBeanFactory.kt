@@ -16,10 +16,11 @@ class DefaultBeanFactory(
     private val beanInitializer = BeanInitializers(*beanInitializerArgs)
 
     fun instantiate() {
-        beanDefinitions.forEach { instantiateBeanDefinition(it) } }
+        beanDefinitions.forEach { instantiateBeanDefinition(it) }
+    }
 
     private fun instantiateBeanDefinition(beanDefinition: BeanDefinition): Any {
-        if(beans[beanDefinition.name] != null) {
+        if (beans[beanDefinition.name] != null) {
             return beans[beanDefinition.name]!!
         }
 
@@ -28,7 +29,12 @@ class DefaultBeanFactory(
         return instance
     }
 
-    override fun <T : Any> getBean(type: KClass<T>): T = beans[type.qualifiedName] as T
+    override fun <T : Any> getBean(type: KClass<T>): T {
+        val bean = doGetBean(type.qualifiedName!!)?: throw BeanInstantiationException("cannot find bean name: ${type.qualifiedName}")
+        return bean as T
+    }
+
+    private fun doGetBean(name: String) = beans[name]?: beanDefinitions.find { it.name == name }?.let(::instantiateBeanDefinition)
 
     override fun registerBeanDefinition(beanDefinition: BeanDefinition) {
         beanDefinitions.add(beanDefinition)

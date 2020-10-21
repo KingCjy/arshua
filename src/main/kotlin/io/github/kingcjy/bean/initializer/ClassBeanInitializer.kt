@@ -5,6 +5,7 @@ import io.github.kingcjy.bean.definition.BeanDefinition
 import io.github.kingcjy.bean.definition.ClassBeanDefinition
 import io.github.kingcjy.bean.util.findParameters
 import io.github.kingcjy.bean.util.findPrimaryConstructor
+import java.util.*
 
 
 /**
@@ -17,6 +18,7 @@ class ClassBeanInitializer: BeanInitializer {
     override fun instantiate(beanDefinition: BeanDefinition, beanFactory: BeanFactory): Any {
         val constructor = findPrimaryConstructor(beanDefinition.type)
         val parameters = findParameters(beanFactory, constructor).toTypedArray()
-        return constructor.call(*parameters)!!
+
+        return constructor.call(*parameters)
     }
 }
